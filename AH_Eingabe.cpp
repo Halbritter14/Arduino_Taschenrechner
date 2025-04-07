@@ -4,6 +4,8 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
+#include <cctype>  // Für std::isdigit und std::isspace
+
 HANDLE serialHandle;
 
 void openSerialPort() {
@@ -33,6 +35,7 @@ void openSerialPort() {
     timeouts.WriteTotalTimeoutMultiplier = 10;
     SetCommTimeouts(serialHandle, &timeouts);
 }
+
 void sendData(const std::string& data) {
     DWORD bytesWritten;
     WriteFile(serialHandle, data.c_str(), static_cast<DWORD>(data.size()), &bytesWritten, NULL);
@@ -44,12 +47,34 @@ std::string readData() {
     ReadFile(serialHandle, buffer, sizeof(buffer), &bytesRead, NULL);
     return std::string(buffer, bytesRead);
 }
+
+bool isValidCalculation(const std::string& str) {
+    for (char c : str) {
+        if (!std::isdigit(c) && !std::isspace(c) && c != '+' && c != '-' && c != '*' && c != '/') {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool containsSpaces(const std::string& str) {
+    return str.find(' ') != std::string::npos;
+}
+
 int main() {
     openSerialPort();
     std::string input;
     while (true) {
         std::cout << "Geben Sie eine Berechnung ein: ";
         std::getline(std::cin, input);
+        if (!isValidCalculation(input)) {
+            std::cout << "Falsche Eingabe. Nur Zahlen und +, -, *, / sind erlaubt.\n";
+            continue;
+        }
+        if (!containsSpaces(input)) {
+            std::cout << "Bitte fuegen Sie ein Leerzeichen zwischen den Zahlen und Operatoren ein.\n";
+            continue;
+        }
         sendData(input + "\n");  // Sendet die Eingabe an den Arduino
         std::string result = readData();  // Liest das Ergebnis vom Arduino
         std::cout << "Ergebnis: " << result << std::endl;
