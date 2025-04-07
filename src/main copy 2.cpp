@@ -5,21 +5,20 @@ String inputString = "";    // Ein String, um die eingehenden Daten zu speichern
 bool stringComplete = false;  // Wahr, wenn der komplette String empfangen wurde
 
 void setup() {
-    Serial.begin(9600); // Starte die serielle Kommunikation mit 9600 Baud
+    Serial.begin(9600); // Startet die serielle Kommunikation mit 9600 Baud
     inputString.reserve(200); // Reserviert Speicher für den Eingabestring
 }
 
 // Diese Funktion wird aufgerufen, wenn neue Daten verfügbar sind
 void serialEvent() {
     while (Serial.available()) {
-        char inChar = (char)Serial.read(); // Liest das nächste verfügbare Zeichen
+        char inChar = (char)Serial.read(); // Liest das nächste Zeichen
         inputString += inChar;
-        if (inChar == '\n') { // Prüft auf das Ende der Zeile (Eingabeende)
+        if (inChar == '\n') { // Prüft auf das Ende der Zeile
             stringComplete = true;
         }
     }
 }
-
 // Funktion zur Berechnung der Rechenaufgabe
 int calculate(String data) {
     int firstNumber = 0, secondNumber = 0; // Variablen für die Zahlen
