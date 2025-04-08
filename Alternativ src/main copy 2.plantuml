@@ -1,0 +1,29 @@
+@startuml
+title Aktivitätsdiagramm für main copy 2.cpp
+
+start
+:Initialisierung;
+:setup() {
+    Serial.begin(9600);
+    inputString.reserve(200);
+};
+
+while (true) {
+    :serialEvent() {
+        Liest Daten ein;
+        Prüft auf Zeilenende;
+    };
+
+    if (stringComplete?) then (yes)
+        :calculate(inputString) {
+            Parse Input;
+            Führe Berechnung durch;
+        };
+        :Serial.println(Ergebnis);
+        :Bereite String für nächste Eingabe vor;
+    else (no)
+    endif
+}
+
+stop
+@enduml
